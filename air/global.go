@@ -3,26 +3,10 @@ package air
 import "errors"
 
 type (
-	// DataStore defines the interface to manage the data
-	DataStore interface {
-		Open() (newStore bool, err error)
-		Init() error
-		Close() error
-		Settings() DBService
-	}
-
-	DBService interface {
-		UserByEmail(email string) (*User, error)
-		CreateUser(user *User) error
-	}
-	RedisService interface {
-		UserByEmail(name string) (*User, error)
-		CreateUser(user *User) error
-	}
 	User struct {
 		ID        int    `json:"ID"`
 		Email     string `json:"Email"`
-		Password  string `json:"Password"`
+		Password  string `json:"Password,omitempty"`
 		FirstName string `json:"FirstName"`
 		LastName  string `json:"LastName"`
 	}
