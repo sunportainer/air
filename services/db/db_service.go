@@ -17,16 +17,16 @@ type DBService interface {
 
 //here we use json to mock one postsqlgre database
 type Service struct {
+	db string
 }
 
-func NewDBService() (DBService, error) {
-	service := Service{}
-	if !dbExists("./db.json") {
+func NewDBService(dbFile string) (DBService, error) {
+	service := Service{dbFile}
+	if !dbExists(dbFile) {
 		file := `{"users": []}`
-		ioutil.WriteFile("./db.json", []byte(file), os.FileMode(0755))
+		ioutil.WriteFile(dbFile, []byte(file), os.FileMode(0755))
 	}
 	return &service, nil
-
 }
 
 //query user info from database
@@ -63,7 +63,7 @@ func (service *Service) CreateUser(user *air.User) error {
 
 //load json-based db file to struct
 func (service *Service) loadDB() (*air.MockDB, error) {
-	filePtr, err := os.Open("./db.json")
+	filePtr, err := os.Open(service.db)
 	if err != nil {
 		log.Println("Failed to read DB file")
 		return nil, err
@@ -81,7 +81,7 @@ func (service *Service) loadDB() (*air.MockDB, error) {
 //write structs back to json-based db file
 func (service *Service) flushDB(db *air.MockDB) error {
 
-	filePtr, err := os.OpenFile("./db.json", os.O_WRONLY|os.O_TRUNC|os.O_CREATE, 0755)
+	filePtr, err := os.OpenFile(service.db, os.O_WRONLY|os.O_TRUNC|os.O_CREATE, 0755)
 	if err != nil {
 		log.Println("Failed to read DB file")
 		return err
